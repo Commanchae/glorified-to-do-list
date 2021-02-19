@@ -113,10 +113,14 @@ class Ui_win(object):
         self.widget_c_remove.setEnabled(False)
         self.widget_c_remove.setGeometry(QtCore.QRect(10, 120, 75, 23))
         self.widget_c_remove.setObjectName("widget_c_remove")
+        self.widget_c_remove.clicked.connect(self.removeCategory)
+        ### Category - List Display
         self.widget_c_listwidget = QtWidgets.QListWidget(self.widget_c)
         self.widget_c_listwidget.setGeometry(QtCore.QRect(10, 30, 181, 81))
         self.widget_c_listwidget.setAlternatingRowColors(True)
         self.widget_c_listwidget.setObjectName("widget_c_listwidget")
+        self.widget_c_listwidget.itemPressed.connect(self.listItemPressed)
+
         self.line_3 = QtWidgets.QFrame(self.tab_construction_lab)
         self.line_3.setGeometry(QtCore.QRect(590, 0, 16, 301))
         self.line_3.setFrameShape(QtWidgets.QFrame.VLine)
@@ -166,17 +170,29 @@ class Ui_win(object):
     def createItem(self):
         item_name = self.widget_cai_name.text()
         print(self.widget_c_listwidget.currentRow())
+        self.widget_cai_category.removeItem(0)
+
 
     def addCategorytoList(self,category):
+        self.user_categories.append(category)
         self.widget_c_listwidget.addItem(category.name)
         self.widget_cai_category.addItem(category.name)
-        self.user_categories.append(category)
+        
 
     def addCategory(self):
         category_name = self.widget_c_name.text() # Get input text.
-        self.widget_c_name.clear()
-        category_lv = self.widget_c_listwidget # List View Item reference.
+        self.widget_c_name.clear() # Clear input text.
         self.addCategorytoList(Category(category_name))
+
+    def removeCategory(self):
+        delete_index  = self.widget_c_listwidget.currentRow()
+        self.widget_c_listwidget.takeItem(delete_index)
+        self.widget_cai_category.removeItem(delete_index)
+        if self.widget_c_listwidget.count() == 0:
+            self.widget_c_remove.setEnabled(False)
+
+    def listItemPressed(self):
+        self.widget_c_remove.setEnabled(True)
 
 class Category():
     def __init__(self,name):
